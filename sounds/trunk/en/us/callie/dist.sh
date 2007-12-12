@@ -12,8 +12,8 @@ for rate in $rates; do \
   for dir in `ls $base_dir`; do \
     test -d $tmp_dir/$voice_dir/$dir/$rate || mkdir -p $tmp_dir/$voice_dir/$dir/$rate; \
     for filename in `ls $base_dir/$dir`; do \
-      echo sox $base_dir/$dir/$filename -r $rate -c 1 $tmp_dir/$voice_dir/$dir/$rate/$filename; \
-      sox $base_dir/$dir/$filename -r $rate -c 1 $tmp_dir/$voice_dir/$dir/$rate/$filename; \
+      echo sox -v 0.2 $base_dir/$dir/$filename -r $rate -c 1 $tmp_dir/$voice_dir/$dir/$rate/$filename; \
+      sox -v 0.2 $base_dir/$dir/$filename -r $rate -c 1 $tmp_dir/$voice_dir/$dir/$rate/$filename; \
     done ; \
   done ; \
   cd $tmp_dir
