@@ -1,6 +1,6 @@
 base_dir="44000"
 rates="48000 32000 16000 8000"
-version="1.0.11"
+version="1.0.12"
 voice="ru-RU-elena"
 voice_dir="ru/RU/elena"
 tar_path="../../.."
