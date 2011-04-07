@@ -1,3 +1,10 @@
+#
+# dist_sounds.sh
+#
+# This script simply does the normalizing and resampling of the 48kHz sounds.
+# Use the script in en/us/callie if you wish to actually create the tarballs.
+#
+
 country="us"
 lang="en"
 voice="callie"
