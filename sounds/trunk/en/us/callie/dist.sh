@@ -21,8 +21,11 @@ for rate in $rates; do \
   tar -cvzf $CWD/$tar_path/freeswitch-sounds-$voice-$rate-$version.tar.gz *; \
   cd -
   rm -rf $tmp_dir
-  cd $CWD/$tar_path
+done
+
+cd $tar_path
+for rate in $rates; do \
   openssl dgst -sha1 freeswitch-sounds-$voice-$rate-$version.tar.gz > freeswitch-sounds-$voice-$rate-$version.tar.gz.sha1 ; \
   openssl dgst -md5 freeswitch-sounds-$voice-$rate-$version.tar.gz > freeswitch-sounds-$voice-$rate-$version.tar.gz.md5 ; \
 done
-
+cd $CWD
