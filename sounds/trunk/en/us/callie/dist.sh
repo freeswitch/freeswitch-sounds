@@ -17,6 +17,8 @@ for rate in $rates; do \
     done ; \
   done ; \
   cd $tmp_dir
+  echo cp $CWD/LICENSE .
+  cp $CWD/LICENSE .
   echo tar -cvzf $CWD/$tar_path/freeswitch-sounds-$voice-$rate-$version.tar.gz *; \
   tar -cvzf $CWD/$tar_path/freeswitch-sounds-$voice-$rate-$version.tar.gz *; \
   cd -
