@@ -1,6 +1,6 @@
 base_dir="48000"
 rates="48000 32000 16000 8000"
-version="1.0.18"
+version="1.0.19"
 voice="en-us-callie"
 voice_dir="en/us/callie"
 tar_path="../../.."
