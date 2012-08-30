@@ -1,6 +1,6 @@
 base_dir="48000"
 rates="48000 32000 16000 8000"
-version="1.0.16"
+version="1.0.18"
 voice="fr-ca-june"
 voice_dir="fr/ca/june"
 tar_path="../../.."
