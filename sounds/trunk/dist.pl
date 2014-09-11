@@ -19,14 +19,14 @@ foreach my $voicedir (@languages) {
     my $tar_path = "tmp/$voicedir";
     foreach my $rate (@rates) {
 	if ($voicedir =~ m/music/) {
-	    print "rate: $rate\n";
+	    print "rate: $rate\n" if $debug;
 	    print "tar_path: $tar_path $basedir\n" if $debug;
 	    my @files = <$basedir/*>;
 	    print Dumper \@files if $debug;
 	    foreach my $file (@files) {
 		(my $newfile = $file ) =~ s/48000/$rate/g;
 		my $newdir = dirname $newfile;
-		print "newdir:$newdir\n";
+		print "newdir:$newdir\n" if $debug;
 		mkpath "tmp/$newdir";
 		print "sox -v 0.2 $file -r $rate -c 1 tmp/$newfile\n" if $debug;
 		system("sox -v 0.2 $file -r $rate -c 1 tmp/$newfile 2>&1 > /dev/null");
@@ -37,7 +37,7 @@ foreach my $voicedir (@languages) {
 	    print Dumper \@dirs if $debug;
 	    foreach my $dir (@dirs) {
 		my @files = <$dir/*>;
-		print Dumper \@files;
+		print Dumper \@files if $debug;
 		foreach my $file (@files) {
 		    my $newfile;
 		    if ($voicedir =~ m/ru\/RU\/elena/) {
@@ -46,7 +46,7 @@ foreach my $voicedir (@languages) {
 			( $newfile = $file ) =~ s/48000/$rate/g;
 		    }
 		    my $newdir = dirname $newfile;
-		    print "newdir:$newdir\n";
+		    print "newdir:$newdir\n" if $debug;
 		    mkpath "tmp/$newdir";
 		    print "sox -v 0.2 $file -r $rate -c 1 tmp/$newfile\n" if $debug;
 		    system("sox -v 0.2 $file -r $rate -c 1 tmp/$newfile 2>&1 > /dev/null");
