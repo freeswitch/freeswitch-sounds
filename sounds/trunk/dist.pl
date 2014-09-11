@@ -11,6 +11,7 @@ my @rates     = qw(8000 16000 32000 48000);
 foreach my $voicedir (@languages) {
     my $version = shift @versions;
     my $basedir = "$voicedir/48000";
+    my $savepath;
     if ($voicedir =~ m/ru\/RU\/elena/) {
 	$basedir = "$voicedir/44000";
     }
@@ -39,6 +40,8 @@ foreach my $voicedir (@languages) {
 		my @files = <$dir/*>;
 		print Dumper \@files if $debug;
 		foreach my $file (@files) {
+
+		    my $filename = fileparse($file);
 		    my $newfile;
 		    if ($voicedir =~ m/ru\/RU\/elena/) {
 			( $newfile = $file ) =~ s/44000/$rate/g;
@@ -46,15 +49,22 @@ foreach my $voicedir (@languages) {
 			( $newfile = $file ) =~ s/48000/$rate/g;
 		    }
 		    my $newdir = dirname $newfile;
-		    print "newdir:$newdir\n" if $debug;
+		    my @parts = split(/\//, $newdir);
+		    my $sdir = pop @parts;
+		    my $rate = pop @parts;
+		    my $spath = join("/", @parts);
+		    $newdir = "$spath/$sdir/$rate";
+		    $savepath = "$spath/*/$rate";
+		    
+		    print "newdir:$newdir newfile:$newfile\n" if $debug;
 		    mkpath "tmp/$newdir";
-		    print "sox -v 0.2 $file -r $rate -c 1 tmp/$newfile\n" if $debug;
-		    system("sox -v 0.2 $file -r $rate -c 1 tmp/$newfile 2>&1 > /dev/null");
+		    print "sox -v 0.2 $file -r $rate -c 1 tmp/$newdir/$filename\n" if $debug;
+		    system("sox -v 0.2 $file -r $rate -c 1 tmp/$newdir/$filename 2>&1 > /dev/null");
 		}
 	    }
 	}
-	print "cd tmp && tar -cvzf ../freeswitch-sounds-$voice-$rate-$version.tar.gz $voicedir/$rate\n" if $debug;
-	system("cd tmp && tar -cvzf ../freeswitch-sounds-$voice-$rate-$version.tar.gz $voicedir/$rate 2>&1 > /dev/null");
+	print "cd tmp && tar -cvzf ../freeswitch-sounds-$voice-$rate-$version.tar.gz $savepath\n" if $debug;
+	system("cd tmp && tar -cvzf ../freeswitch-sounds-$voice-$rate-$version.tar.gz $savepath 2>&1 > /dev/null");
 	print "cd tmp && openssl dgst -md5 ../freeswitch-sounds-$voice-$rate-$version.tar.gz > ../freeswitch-sounds-$voice-$rate-$version.tar.gz.md5\n" if $debug;
 	print "cd tmp && openssl dgst -sha1 ../freeswitch-sounds-$voice-$rate-$version.tar.gz > ../freeswitch-sounds-$voice-$rate-$version.tar.gz.sha1\n" if $debug;
 	print "cd tmp && openssl dgst -sha256 ../freeswitch-sounds-$voice-$rate-$version.tar.gz > ../freeswitch-sounds-$voice-$rate-$version.tar.gz.sha256\n" if $debug;
