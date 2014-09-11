@@ -1,12 +1,45 @@
 #!/usr/bin/perl
+#
+# FreeSWITCH Sound File Distribution creation script. 
+#
+#
+use warnings;
+use strict;
 use Data::Dumper;
 use File::Path;
 use File::Basename;
+
 my $debug = 0;
 
 my @languages = qw(en/us/callie en/ca/june fr/ca/june pt/BR/karina ru/RU/elena zh/cn/sinmei zh/hk/sinmei music);
-my @versions  = qw(1.0.50       1.0.50     1.0.50     1.0.50        1.0.50     1.0.50       1.0.50       1.0.50);
+my @versions  = qw(1.0.50       1.0.50     1.0.50     1.0.50       1.0.50      1.0.50       1.0.50       1.0.50);
 my @rates     = qw(8000 16000 32000 48000);
+
+if (scalar(@ARGV)) {
+    my @filteredlang;
+    my @filteredvers;
+
+    foreach my $arg (@ARGV) {
+	my @startlang = @languages;
+	my @startvers = @versions;
+	print "FUCK $arg\n";
+	if ((my $matched) = grep $_ eq $arg, @startlang) {
+	    foreach my $lang (@startlang) {
+		my $version = shift @startvers;
+		if ( $lang eq $arg ) {
+		    push @filteredlang, $lang;
+		    push @filteredvers, $version;
+		}
+	    }
+	    
+	}
+    }
+    @languages = ();
+    @versions = ();
+    @languages = @filteredlang;
+    @versions  = @filteredvers;
+}
+
 
 foreach my $voicedir (@languages) {
     my $version = shift @versions;
@@ -31,6 +64,7 @@ foreach my $voicedir (@languages) {
 		mkpath "tmp/$newdir";
 		print "sox -v 0.2 $file -r $rate -c 1 tmp/$newfile\n" if $debug;
 		system("sox -v 0.2 $file -r $rate -c 1 tmp/$newfile 2>&1 > /dev/null");
+		$savepath = $newfile;
 	    }
 	} else {
 	    mkpath "$tar_path";
@@ -74,4 +108,4 @@ foreach my $voicedir (@languages) {
     }
 }
 
-system("rm -rf tmp");
+#system("rm -rf tmp");
