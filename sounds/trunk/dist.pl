@@ -22,7 +22,6 @@ if (scalar(@ARGV)) {
     foreach my $arg (@ARGV) {
 	my @startlang = @languages;
 	my @startvers = @versions;
-	print "FUCK $arg\n";
 	if ((my $matched) = grep $_ eq $arg, @startlang) {
 	    foreach my $lang (@startlang) {
 		my $version = shift @startvers;
