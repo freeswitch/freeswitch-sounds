@@ -12,7 +12,7 @@ use File::Basename;
 my $debug = 0;
 
 my @languages = qw(en/us/callie en/ca/june fr/ca/june pt/BR/karina ru/RU/elena zh/cn/sinmei zh/hk/sinmei music);
-my @versions  = qw(1.0.50       1.0.50     1.0.50     1.0.50       1.0.50      1.0.50       1.0.50       1.0.50);
+my @versions  = qw(1.0.50       1.0.50     1.0.50     1.0.50       1.0.50      1.0.50       1.0.50       1.0.51);
 my @rates     = qw(8000 16000 32000 48000);
 
 if (scalar(@ARGV)) {
@@ -58,12 +58,19 @@ foreach my $voicedir (@languages) {
 	    print Dumper \@files if $debug;
 	    foreach my $file (@files) {
 		(my $newfile = $file ) =~ s/48000/$rate/g;
+
 		my $newdir = dirname $newfile;
+		my @parts = split(/\//, $newdir);
+		my $rate = pop @parts;
+		my $spath = join("/", @parts);
+		$newdir = "$spath/$rate";
+		$savepath = "$spath/$rate";
+
 		print "newdir:$newdir\n" if $debug;
+		print "savepath: $savepath\n" if $debug;
 		mkpath "tmp/$newdir";
-		print "sox -v 0.2 $file -r $rate -c 1 tmp/$newfile\n" if $debug;
-		system("sox -v 0.2 $file -r $rate -c 1 tmp/$newfile 2>&1 > /dev/null");
-		$savepath = $newfile;
+		print "sox $file -r $rate -c 1 tmp/$newfile\n" if $debug;
+		system("sox $file -r $rate -c 1 tmp/$newfile 2>&1 > /dev/null");
 	    }
 	} else {
 	    mkpath "$tar_path";
