@@ -69,8 +69,10 @@ foreach my $voicedir (@languages) {
 		print "newdir:$newdir\n" if $debug;
 		print "savepath: $savepath\n" if $debug;
 		mkpath "tmp/$newdir";
-		print "sox $file -r $rate -c 1 tmp/$newfile\n" if $debug;
+		print "sox $file -r $rate -c 1 tmp/$newfile\n" if $debug;		
 		system("sox $file -r $rate -c 1 tmp/$newfile 2>&1 > /dev/null");
+		print "normalize-audio -l -12dBFS -a -19dBFS tmp/$newfile\n" if $debug;
+		system("normalize-audio -l -12dBFS -a -19dBFS tmp/$newfile 2>&1 > /dev/null");
 	    }
 	} else {
 	    mkpath "$tar_path";
