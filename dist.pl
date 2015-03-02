@@ -9,7 +9,7 @@ use Data::Dumper;
 use File::Path;
 use File::Basename;
 
-my $debug = 2;
+my $debug = 1;
 
 my @languages = qw(en/us/callie en/ca/june fr/ca/june pt/BR/karina ru/RU/elena zh/cn/sinmei zh/hk/sinmei music);
 my @versions  = qw(1.0.52       1.0.51     1.0.51     1.0.51       1.0.51      1.0.51       1.0.51       1.0.51);
