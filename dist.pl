@@ -42,11 +42,11 @@ if (scalar(@ARGV)) {
 
 foreach my $voicedir (@languages) {
     my $version = shift @versions;
-    my $basedir = "$voicedir/48000";
+    my $basedir = "$voicedir";
     my $savepath;
-    if ($voicedir =~ m/ru\/RU\/elena/) {
-	$basedir = "$voicedir/44000";
-    }
+#    if ($voicedir =~ m/ru\/RU\/elena/) {
+#	$basedir = "$voicedir/44000";
+#    }
     
     ( my $voice = $voicedir ) =~ s/\//-/g;
     my $tar_path = "tmp/$voicedir";
@@ -79,7 +79,7 @@ foreach my $voicedir (@languages) {
 	    my @dirs = <$basedir/*>;
 	    print Dumper \@dirs if $debug;
 	    foreach my $dir (@dirs) {
-		my @files = <$dir/*>;
+		my @files = <$dir/*/*>;
 		print Dumper \@files if $debug;
 		foreach my $file (@files) {
 
@@ -92,8 +92,8 @@ foreach my $voicedir (@languages) {
 		    }
 		    my $newdir = dirname $newfile;
 		    my @parts = split(/\//, $newdir);
-		    my $sdir = pop @parts;
 		    my $rate = pop @parts;
+		    my $sdir = pop @parts;
 		    my $spath = join("/", @parts);
 		    $newdir = "$spath/$sdir/$rate";
 		    $savepath = "$spath/*/$rate";
