@@ -9,7 +9,7 @@ use Data::Dumper;
 use File::Path;
 use File::Basename;
 
-my $debug = 0;
+my $debug = 2;
 
 my @languages = qw(en/us/callie en/ca/june fr/ca/june pt/BR/karina ru/RU/elena zh/cn/sinmei zh/hk/sinmei music);
 my @versions  = qw(1.0.52       1.0.51     1.0.51     1.0.51       1.0.51      1.0.51       1.0.51       1.0.51);
@@ -52,20 +52,20 @@ foreach my $voicedir (@languages) {
     my $tar_path = "tmp/$voicedir";
     foreach my $rate (@rates) {
 	if ($voicedir =~ m/music/) {
+	    $basedir = "$basedir/48000";
 	    print "rate: $rate\n" if $debug;
 	    print "tar_path: $tar_path $basedir\n" if $debug;
 	    my @files = <$basedir/*>;
 	    print Dumper \@files if $debug;
 	    foreach my $file (@files) {
 		(my $newfile = $file ) =~ s/48000/$rate/g;
-
 		my $newdir = dirname $newfile;
 		my @parts = split(/\//, $newdir);
 		my $rate = pop @parts;
+		print "rate2: $rate\n";
 		my $spath = join("/", @parts);
 		$newdir = "$spath/$rate";
 		$savepath = "$spath/$rate";
-
 		print "newdir:$newdir\n" if $debug;
 		print "savepath: $savepath\n" if $debug;
 		mkpath "tmp/$newdir";
@@ -74,6 +74,7 @@ foreach my $voicedir (@languages) {
 		print "normalize-audio -l -12dBFS -a -19dBFS tmp/$newfile\n" if $debug;
 		system("normalize-audio -l -12dBFS -a -19dBFS tmp/$newfile 2>&1 > /dev/null");
 	    }
+
 	} else {
 	    mkpath "$tar_path";
 	    my @dirs = <$basedir/*>;
