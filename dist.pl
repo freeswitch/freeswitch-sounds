@@ -50,9 +50,12 @@ foreach my $voicedir (@languages) {
     
     ( my $voice = $voicedir ) =~ s/\//-/g;
     my $tar_path = "tmp/$voicedir";
+    
+    if ($voicedir =~ m/music/) {
+	    $basedir = "$basedir/48000/";
+    }
     foreach my $rate (@rates) {
 	if ($voicedir =~ m/music/) {
-	    $basedir = "$basedir/48000";
 	    print "rate: $rate\n" if $debug;
 	    print "tar_path: $tar_path $basedir\n" if $debug;
 	    my @files = <$basedir/*>;
