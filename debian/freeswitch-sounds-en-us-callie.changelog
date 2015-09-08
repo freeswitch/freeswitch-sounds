@@ -1,0 +1,54 @@
+freeswitch-sounds-en-us-callie (1.0.51-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Travis Cross <tc@traviscross.com>  Sun, 21 Dec 2014 22:42:03 +0000
+
+freeswitch-sounds-en-us-callie (1.0.50-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Travis Cross <tc@traviscross.com>  Sun, 21 Dec 2014 22:41:51 +0000
+
+freeswitch-sounds-en-us-callie (1.0.25-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Travis Cross <tc@traviscross.com>  Mon, 24 Jun 2013 00:53:26 +0000
+
+freeswitch-sounds-en-us-callie (1.0.24-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Travis Cross <tc@traviscross.com>  Sat, 02 Mar 2013 20:56:49 +0000
+
+freeswitch-sounds-en-us-callie (1.0.22-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Travis Cross <tc@traviscross.com>  Sun, 10 Feb 2013 03:11:15 +0000
+
+freeswitch-sounds-en-us-callie (1.0.21-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Travis Cross <tc@traviscross.com>  Thu, 20 Sep 2012 20:41:07 +0000
+
+freeswitch-sounds-en-us-callie (1.0.18-3) unstable; urgency=low
+
+  * Minor changes.
+
+ -- Travis Cross <tc@traviscross.com>  Mon, 20 Aug 2012 08:07:33 +0000
+
+freeswitch-sounds-en-us-callie (1.0.18-2) unstable; urgency=low
+
+  * We now distribute the sounds as FLAC files that are converted to
+    various sampling rates after installation.
+
+ -- Travis Cross <tc@traviscross.com>  Wed, 30 May 2012 08:14:34 +0000
+
+freeswitch-sounds-en-us-callie (1.0.18-1) unstable; urgency=low
+
+  * Initial release.
+
+ -- Travis Cross <tc@traviscross.com>  Wed, 16 May 2012 03:04:21 +0000

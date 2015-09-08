@@ -1,0 +1,96 @@
+#!/usr/bin/make -f
+# -*- mode:makefile -*-
+##### Author: Travis Cross <tc@traviscross.com>
+
+#export DH_VERBOSE=1
+
+#### vars
+
+DESTDIR ?= debian/tmp/usr/share/freeswitch/sounds
+spath := __PATH__
+srate := __RATE__
+ver := __VERSION__
+pkg := __PKG_NAME__
+upkg := __UPKG_NAME__
+sound := __SOUND__
+
+all: binary
+
+#### build sounds
+
+sdirs := $(wildcard $(spath)/*)
+swavs:= $(foreach dir,$(sdirs),$(wildcard $(dir)/*.wav))
+ddirs := $(addsuffix /flac,$(addprefix build/,$(sdirs)))
+dflacs := $(patsubst %.wav,%.flac,$(foreach wav,$(swavs),build/$(dir $(wav))flac/$(notdir $(wav))))
+iflacs := $(patsubst build/%,$(DESTDIR)/%,$(dflacs))
+
+define defdir
+$(1)/.dir:
+	mkdir -p $$(@D)
+	touch $$@
+.PRECIOUS: $(1)/.dir
+endef
+
+define defflac
+.SECONDEXPANSION:
+build/$(dir $(1))flac/$(basename $(notdir $(1))).flac: $(1) $$$$(@D)/.dir
+	sox $$< -c1 -b16 -r48000 -e signed-integer -t wav - | flac -f -o $$@ -s --lax -8 -
+endef
+
+$(foreach dir,$(ddirs),$(eval $(call defdir,$(dir))))
+$(foreach wav,$(swavs),$(eval $(call defflac,$(wav))))
+
+install: build
+	if [ -d build/music ]; then \
+	  install -d $(DESTDIR)/music/$(sound)/flac; \
+	  for x in build/music/$(sound)/flac/*; do \
+	    install -m0644 $$x $(DESTDIR)/$${x#*/}; \
+	  done; \
+	else \
+	  for x in build/*/*/*/*/flac; do install -d $(DESTDIR)/$${x#*/}; done; \
+	  for x in build/*/*/*/*/flac/*; do install -m0644 $$x $(DESTDIR)/$${x#*/}; done; \
+	fi
+
+#### debian
+
+binary: binary-indep
+binary-arch:
+binary-indep: install
+	dh_testdir -i
+	dh_testroot -i
+	dh_installdirs -i
+	dh_install -i
+	dh_installdocs -i
+	dh_installchangelogs -i
+	dh_lintian -i
+	dh_compress -i
+	dh_fixperms -i
+	dh_installdeb -i
+	dh_gencontrol -i
+	dh_md5sums -i
+	dh_builddeb -i
+
+build: build-indep
+build-arch:
+build-indep: $(dflacs)
+
+get-orig-source:
+	$(eval tmpdir := $(shell mktemp -d --tmpdir=.))
+	wget -O $(tmpdir)/upstream.tgz "http://files.freeswitch.org/$(upkg)-$(srate)-$(ver).tar.gz"
+	mkdir -p $(tmpdir)/$(pkg)-$(ver)
+	tar -x -C $(tmpdir)/$(pkg)-$(ver) -f $(tmpdir)/upstream.tgz
+	if [ -d $(tmpdir)/$(pkg)-$(ver)/music ]; then \
+	  mv $(tmpdir)/$(pkg)-$(ver)/music/$(srate) $(tmpdir)/$(pkg)-$(ver)/music/$(sound); \
+	else \
+	  for x in $(tmpdir)/$(pkg)-$(ver)/*/*/*/*; do \
+	    for y in $$x/*; do mv $$y/* $$x; rmdir $$y; done; \
+	  done; \
+	fi
+	tar -c -C $(tmpdir) -f $(pkg)_$(ver).orig.tar $(pkg)-$(ver)
+	xz -9ev $(pkg)_$(ver).orig.tar
+	rm -rf $(tmpdir)
+
+clean:
+	rm -rf build
+	dh_testdir
+	dh_clean
