@@ -11,8 +11,8 @@ use File::Basename;
 
 my $debug = 1;
 
-my @languages = qw(en/us/callie en/ca/june fr/ca/june pt/BR/karina ru/RU/elena zh/cn/sinmei zh/hk/sinmei music);
-my @versions  = qw(1.0.52       1.0.51     1.0.51     1.0.51       1.0.51      1.0.51       1.0.51       1.0.52);
+my @languages = qw(en/us/callie en/us/allison en/ca/june fr/ca/june pt/BR/karina ru/RU/elena zh/cn/sinmei zh/hk/sinmei music);
+my @versions  = qw(1.0.52       1.0.0         1.0.51     1.0.51     1.0.51       1.0.51      1.0.51       1.0.51       1.0.52);
 my @rates     = qw(8000 16000 32000 48000);
 
 if (scalar(@ARGV)) {
@@ -44,9 +44,14 @@ foreach my $voicedir (@languages) {
     my $version = shift @versions;
     my $basedir = "$voicedir";
     my $savepath;
+    my $args = "";
 #    if ($voicedir =~ m/ru\/RU\/elena/) {
 #	$basedir = "$voicedir/44000";
 #    }
+
+    if ($voicedir =~ m/allison/) {
+	$args = 'lowpass 5000';
+    }
     
     ( my $voice = $voicedir ) =~ s/\//-/g;
     my $tar_path = "tmp/$voicedir";
@@ -72,8 +77,8 @@ foreach my $voicedir (@languages) {
 		print "newdir:$newdir\n" if $debug;
 		print "savepath: $savepath\n" if $debug;
 		mkpath "tmp/$newdir";
-		print "sox $file -r $rate -c 1 tmp/$newfile\n" if $debug;		
-		system("sox $file -r $rate -c 1 tmp/$newfile 2>&1 > /dev/null");
+		print "sox $file -r $rate -c 1 tmp/$newfile $args\n" if $debug;		
+		system("sox $file -r $rate -c 1 tmp/$newfile $args 2>&1 > /dev/null");
 		print "normalize-audio -l -12dBFS -a -19dBFS tmp/$newfile\n" if $debug;
 		system("normalize-audio -l -12dBFS -a -19dBFS tmp/$newfile 2>&1 > /dev/null");
 	    }
@@ -104,8 +109,8 @@ foreach my $voicedir (@languages) {
 		    
 		    print "newdir:$newdir newfile:$newfile\n" if $debug;
 		    mkpath "tmp/$newdir";
-		    print "sox -v 0.2 $file -r $rate -c 1 tmp/$newdir/$filename\n" if $debug;
-		    system("sox -v 0.2 $file -r $rate -c 1 tmp/$newdir/$filename 2>&1 > /dev/null");
+		    print "sox -v 0.2 $file -r $rate -c 1 tmp/$newdir/$filename $args\n" if $debug;
+		    system("sox -v 0.2 $file -r $rate -c 1 tmp/$newdir/$filename $args 2>&1 > /dev/null");
 		}
 	    }
 	}
