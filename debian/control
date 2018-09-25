@@ -1,0 +1,72 @@
+Source: freeswitch-sounds
+Priority: optional
+Maintainer: FreeSWITCH Solutions <packages@freeswitch.com>
+Build-Depends: debhelper (>= 8.0.0), sox, flac
+Standards-Version: 3.9.8
+Section: comm
+
+Package: freeswitch-music-default
+Architecture: all
+Depends: ${misc:Depends}, sox, flac
+Description: Default music for FreeSWITCH
+ This package contains default music for FreeSWITCH.
+
+Package: freeswitch-sounds-en-us-callie
+Architecture: all
+Depends: ${misc:Depends}, sox, flac
+Description: en-US Callie sounds for FreeSWITCH
+ This package contains en-US Callie sounds for FreeSWITCH.
+
+Package: freeswitch-sounds-en-ca-june
+Architecture: all
+Depends: ${misc:Depends}, sox, flac
+Description: en-CA June sounds for FreeSWITCH
+ This package contains en-CA June sounds for FreeSWITCH.
+
+Package: freeswitch-sounds-en-us-allison
+Architecture: all
+Depends: ${misc:Depends}, sox, flac
+Description: en-US Allison sounds for FreeSWITCH
+ This package contains en-US Allison sounds for FreeSWITCH.
+
+Package: freeswitch-sounds-es-ar-mario
+Architecture: all
+Depends: ${misc:Depends}, sox, flac
+Description: es-AR Mario sounds for FreeSWITCH
+ This package contains es-AR Mario sounds for FreeSWITCH.
+
+Package: freeswitch-sounds-fr-ca-june
+Architecture: all
+Depends: ${misc:Depends}, sox, flac
+Description: fr-CA June sounds for FreeSWITCH
+ This package contains fr-CA June sounds for FreeSWITCH.
+
+Package: freeswitch-sounds-pt-br-karina
+Architecture: all
+Depends: ${misc:Depends}, sox, flac
+Description: pt-BR Karina sounds for FreeSWITCH
+ This package contains pt-BR Karinasounds for FreeSWITCH.
+
+Package: freeswitch-sounds-ru-ru-elena
+Architecture: all
+Depends: ${misc:Depends}, sox, flac
+Description: ru-RU Elena sounds for FreeSWITCH
+ This package contains ru-RU Elena sounds for FreeSWITCH.
+
+Package: freeswitch-sounds-sv-se-jakob
+Architecture: all
+Depends: ${misc:Depends}, sox, flac
+Description: sv-SE Jakob sounds for FreeSWITCH
+ This package contains sv-SE Jakob sounds for FreeSWITCH.
+
+Package: freeswitch-sounds-zh-cn-sinmei
+Architecture: all
+Depends: ${misc:Depends}, sox, flac
+Description: zh-CN Sinmei sounds for FreeSWITCH
+ This package contains zh-CN Sinmei sounds for FreeSWITCH.
+
+Package: freeswitch-sounds-zh-hk-sinmei
+Architecture: all
+Depends: ${misc:Depends}, sox, flac
+Description: zh-hk Sinmei sounds for FreeSWITCH
+ This package contains zh-hk Sinmei sounds for FreeSWITCH.

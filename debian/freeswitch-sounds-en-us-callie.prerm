@@ -1,0 +1,25 @@
+#!/bin/sh
+
+set -e
+path=/usr/share/freeswitch/sounds/en/us/callie
+
+case "$1" in
+  remove|upgrade|deconfigure)
+    for r in 8000 16000 32000 48000; do
+      echo "Removing sounds at $r Hz..." >&2
+      for d in $path/*; do
+        [ -d $d ] || continue
+        rm -rf $d/$r
+      done
+    done
+    ;;
+  failed-upgrade)
+    ;;
+  *)
+    echo "prerm called with unknown argument \`$1'" >&2
+    exit 1
+    ;;
+esac
+
+#DEBHELPER#
+exit 0

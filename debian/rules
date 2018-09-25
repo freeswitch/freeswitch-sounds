@@ -1,0 +1,22 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# get debian distribution codename
+DISTRIBUTION=$(shell lsb_release -sc)
+# get version from changelog, for string mangling
+VERSION=$(shell dpkg-parsechangelog --count 1 --show-field Version)
+# add distribution codename to package version
+PACKAGEVERSION=$(subst ~,~$(DISTRIBUTION)-,$(VERSION))
+
+# Uncomment this to turn on verbose mode.
+export DH_VERBOSE=1
+
+# enable dpkg build flags
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/default.mk
+
+export DPKG_GENSYMBOLS_CHECK_LEVEL=4
+
+%:
+	dh $@

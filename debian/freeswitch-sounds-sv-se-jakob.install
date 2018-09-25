@@ -1,0 +1,6 @@
+sv/SE/jakob/ascii/flac/*.flac usr/share/freeswitch/sounds/sv/se/jakob/ascii/flac/
+sv/SE/jakob/currency/flac/*.flac usr/share/freeswitch/sounds/sv/se/jakob/currency/flac/
+sv/SE/jakob/digits/flac/*.flac usr/share/freeswitch/sounds/sv/se/jakob/digits/flac/
+sv/SE/jakob/phonetic-ascii/flac/*.flac usr/share/freeswitch/sounds/sv/se/jakob/phonetic-ascii/flac/
+sv/SE/jakob/time/flac/*.flac usr/share/freeswitch/sounds/sv/se/jakob/time/flac/
+sv/SE/jakob/voicemail/flac/*.flac usr/share/freeswitch/sounds/sv/se/jakob/voicemail/flac/

@@ -1,0 +1,12 @@
+pt/BR/karina/ascii/flac/*.flac usr/share/freeswitch/sounds/pt/br/karina/ascii/flac/
+pt/BR/karina/base256/flac/*.flac usr/share/freeswitch/sounds/pt/br/karina/base256/flac/
+pt/BR/karina/conference/flac/*.flac usr/share/freeswitch/sounds/pt/br/karina/conference/flac/
+pt/BR/karina/currency/flac/*.flac usr/share/freeswitch/sounds/pt/br/karina/currency/flac/
+pt/BR/karina/digits/flac/*.flac usr/share/freeswitch/sounds/pt/br/karina/digits/flac/
+pt/BR/karina/directory/flac/*.flac usr/share/freeswitch/sounds/pt/br/karina/directory/flac/
+pt/BR/karina/ivr/flac/*.flac usr/share/freeswitch/sounds/pt/br/karina/ivr/flac/
+pt/BR/karina/misc/flac/*.flac usr/share/freeswitch/sounds/pt/br/karina/misc/flac/
+pt/BR/karina/phonetic-ascii/flac/*.flac usr/share/freeswitch/sounds/pt/br/karina/phonetic-ascii/flac/
+pt/BR/karina/time/flac/*.flac usr/share/freeswitch/sounds/pt/br/karina/time/flac/
+pt/BR/karina/voicemail/flac/*.flac usr/share/freeswitch/sounds/pt/br/karina/voicemail/flac/
+pt/BR/karina/zrtp/flac/*.flac usr/share/freeswitch/sounds/pt/br/karina/zrtp/flac/

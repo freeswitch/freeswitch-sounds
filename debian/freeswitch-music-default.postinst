@@ -1,0 +1,28 @@
+#!/bin/sh
+
+set -e
+path=/usr/share/freeswitch/sounds/music
+
+case "$1" in
+  configure)
+    for r in 8000 16000 32000 48000; do
+      echo "Generating sounds at $r Hz..." >&2
+      mkdir -p $path/$r
+      for f in $path/flac/*.flac; do
+        [ -f $f ] || continue
+        w=${f%.flac}.wav
+        flac -s -d -c $f | sox -v 0.98 -t wav - -c1 -r$r -b16 -e signed-integer $path/$r/${w##*/}
+      done
+    done
+    rm -rf $path/flac
+    ;;
+  abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+  *)
+    echo "postinst called with unknown argument \`$1'" >&2
+    exit 1
+    ;;
+esac
+
+#DEBHELPER#
+exit 0

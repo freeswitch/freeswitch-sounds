@@ -1,0 +1,12 @@
+en/US/allison/alt/flac/*.flac usr/share/freeswitch/sounds/en/us/allison/alt/flac/
+en/US/allison/ascii/flac/*.flac usr/share/freeswitch/sounds/en/us/allison/ascii/flac/
+en/US/allison/base256/flac/*.flac usr/share/freeswitch/sounds/en/us/allison/base256/flac/
+en/US/allison/conference/flac/*.flac usr/share/freeswitch/sounds/en/us/allison/conference/flac/
+en/US/allison/currency/flac/*.flac usr/share/freeswitch/sounds/en/us/allison/currency/flac/
+en/US/allison/digits/flac/*.flac usr/share/freeswitch/sounds/en/us/allison/digits/flac/
+en/US/allison/directory/flac/*.flac usr/share/freeswitch/sounds/en/us/allison/directory/flac/
+en/US/allison/ivr/flac/*.flac usr/share/freeswitch/sounds/en/us/allison/ivr/flac/
+en/US/allison/misc/flac/*.flac usr/share/freeswitch/sounds/en/us/allison/misc/flac/
+en/US/allison/time/flac/*.flac usr/share/freeswitch/sounds/en/us/allison/time/flac/
+en/US/allison/voicemail/flac/*.flac usr/share/freeswitch/sounds/en/us/allison/voicemail/flac/
+en/US/allison/zrtp/flac/*.flac usr/share/freeswitch/sounds/en/us/allison/zrtp/flac/

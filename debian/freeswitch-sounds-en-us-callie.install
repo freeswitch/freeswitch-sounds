@@ -1,0 +1,12 @@
+en/US/callie/ascii/flac/*.flac usr/share/freeswitch/sounds/en/us/callie/ascii/flac/
+en/US/callie/base256/flac/*.flac usr/share/freeswitch/sounds/en/us/callie/base256/flac/
+en/US/callie/conference/flac/*.flac usr/share/freeswitch/sounds/en/us/callie/conference/flac/
+en/US/callie/currency/flac/*.flac usr/share/freeswitch/sounds/en/us/callie/currency/flac/
+en/US/callie/digits/flac/*.flac usr/share/freeswitch/sounds/en/us/callie/digits/flac/
+en/US/callie/directory/flac/*.flac usr/share/freeswitch/sounds/en/us/callie/directory/flac/
+en/US/callie/ivr/flac/*.flac usr/share/freeswitch/sounds/en/us/callie/ivr/flac/
+en/US/callie/misc/flac/*.flac usr/share/freeswitch/sounds/en/us/callie/misc/flac/
+en/US/callie/phonetic-ascii/flac/*.flac usr/share/freeswitch/sounds/en/us/callie/phonetic-ascii/flac/
+en/US/callie/time/flac/*.flac usr/share/freeswitch/sounds/en/us/callie/time/flac/
+en/US/callie/voicemail/flac/*.flac usr/share/freeswitch/sounds/en/us/callie/voicemail/flac/
+en/US/callie/zrtp/flac/*.flac usr/share/freeswitch/sounds/en/us/callie/zrtp/flac/

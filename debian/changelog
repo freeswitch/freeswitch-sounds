@@ -1,0 +1,11 @@
+freeswitch-sounds (20180515~u1) unstable; urgency=low
+
+  * New release with changed version numbering.
+
+ -- FreeSWITCH Solutions <packages@freeswitch.com>  Tue, 15 May 2018 13:00:00 +0300
+
+freeswitch-sounds (20180515) unstable; urgency=low
+
+  * Stub release to close itp bug warning.
+
+ -- FreeSWITCH Solutions <packages@freeswitch.com>  Tue, 15 May 2018 12:00:00 +0300

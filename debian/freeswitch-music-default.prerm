@@ -1,0 +1,23 @@
+#!/bin/sh
+
+set -e
+path=/usr/share/freeswitch/sounds/music
+
+case "$1" in
+  remove|upgrade|deconfigure)
+    for r in 8000 16000 32000 48000; do
+      echo "Removing sounds at $r Hz..." >&2
+      [ -d $path/$r ] || continue
+      rm -rf $path/$r
+    done
+    ;;
+  failed-upgrade)
+    ;;
+  *)
+    echo "prerm called with unknown argument \`$1'" >&2
+    exit 1
+    ;;
+esac
+
+#DEBHELPER#
+exit 0
