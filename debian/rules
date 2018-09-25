@@ -20,3 +20,7 @@ export DPKG_GENSYMBOLS_CHECK_LEVEL=4
 
 %:
 	dh $@
+
+# setting mangled package version
+override_dh_gencontrol:
+	dh_gencontrol -- -v$(PACKAGEVERSION)
