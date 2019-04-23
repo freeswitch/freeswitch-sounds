@@ -109,8 +109,18 @@ foreach my $voicedir (@languages) {
 		    
 		    print "newdir:$newdir newfile:$newfile\n" if $debug;
 		    mkpath "tmp/$newdir";
-		    print "sox -v 0.2 $file -r $rate -c 1 tmp/$newdir/$filename $args\n" if $debug;
-		    system("sox -v 0.2 $file -r $rate -c 1 tmp/$newdir/$filename $args 2>&1 > /dev/null");
+		    if (($voicedir =~ m/ru\/RU\/kirill/) || ($voicedir =~ m/ru\/RU\/vika/)) {
+		    	if ($rate eq '48000') {
+		    		print "cp $file tmp/$newdir/$filename\n" if $debug;
+		    		system("cp $file tmp/$newdir/$filename 2>&1 > /dev/null");
+		    	} else {
+		    		print "sox $file -r $rate tmp/$newdir/$filename $args\n" if $debug;
+		    		system("sox $file -r $rate tmp/$newdir/$filename $args 2>&1 > /dev/null");
+		    	}		
+		    } else {
+		    	print "sox -v 0.2 $file -r $rate -c 1 tmp/$newdir/$filename $args\n" if $debug;
+		    	system("sox -v 0.2 $file -r $rate -c 1 tmp/$newdir/$filename $args 2>&1 > /dev/null");
+		    }
 		}
 	    }
 	}
