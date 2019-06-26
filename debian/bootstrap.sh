@@ -89,7 +89,7 @@ fmt_control () {
 Source: $base-$sound
 Section: comm
 Priority: optional
-Maintainer: Travis Cross <tc@traviscross.com>
+Maintainer: Andrey Volk <andrey@signalwire.com>
 Build-Depends: debhelper (>= 8.0.0), sox, flac
 Standards-Version: 3.9.3
 Homepage: http://files.freeswitch.org/

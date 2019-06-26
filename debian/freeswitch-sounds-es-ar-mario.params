@@ -1,0 +1,8 @@
+# -*- mode:sh -*-
+base="freeswitch-sounds"
+upstream_base="freeswitch-sounds"
+sound_name="Spanish/Argentina Mario"
+rate="48000"
+sound="$(dpkg-parsechangelog -lchangelog | grep '^Source' | awk '{print $2}' | sed -e "s/${base}-//")"
+upstream_sound=$(echo "${pkg}" | sed -e "s/${base}-//")
+path="$(echo "${upstream_sound}" | sed -e 's:-:/:g')"
