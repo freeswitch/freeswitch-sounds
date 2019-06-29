@@ -42,8 +42,8 @@ $(foreach wav,$(swavs),$(eval $(call defflac,$(wav))))
 
 install: build
 	if [ -d build/music ]; then \
-	  install -d $(DESTDIR)/music/$(sound)/flac; \
-	  for x in build/music/$(sound)/flac/*; do \
+	  install -d $(DESTDIR)/music/$(srate)/flac; \
+	  for x in build/music/$(srate)/flac/*; do \
 	    install -m0644 $$x $(DESTDIR)/$${x#*/}; \
 	  done; \
 	else \
@@ -79,9 +79,7 @@ get-orig-source:
 	wget -O $(tmpdir)/upstream.tgz "http://files.freeswitch.org/$(upkg)-$(srate)-$(ver).tar.gz"
 	mkdir -p $(tmpdir)/$(pkg)-$(ver)
 	tar -x -C $(tmpdir)/$(pkg)-$(ver) -f $(tmpdir)/upstream.tgz
-	if [ -d $(tmpdir)/$(pkg)-$(ver)/music ]; then \
-	  mv $(tmpdir)/$(pkg)-$(ver)/music/$(srate) $(tmpdir)/$(pkg)-$(ver)/music/$(sound); \
-	else \
+	if [ ! -d $(tmpdir)/$(pkg)-$(ver)/music ]; then \
 	  for x in $(tmpdir)/$(pkg)-$(ver)/*/*/*/*; do \
 	    for y in $$x/*; do mv $$y/* $$x; rmdir $$y; done; \
 	  done; \

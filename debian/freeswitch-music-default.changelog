@@ -1,3 +1,18 @@
+freeswitch-music-default (1.0.52-1) unstable; urgency=low
+
+  * tweak directory placement of sound files to work with the default
+    FreeSWITCH Configs
+  * update for version of sounds tarball
+
+ -- Ken Rice <krice@freeswitch.org>  Wed, 17 Aug 2016 17:01:59 +0000
+
+freeswitch-music-default (1.0.51-2) unstable; urgency=low
+
+  * tweak directory placement of sound files to work with the default
+    FreeSWITCH Configs
+
+ -- Ken Rice <krice@freeswitch.org>  Fri, 15 Jul 2016 14:01:59 +0000
+
 freeswitch-music-default (1.0.51-1) unstable; urgency=low
 
   * New upstream version.

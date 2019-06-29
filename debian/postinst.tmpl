@@ -5,6 +5,7 @@
 set -e
 
 spath=__SPATH__
+bpath=__PATH__
 
 case "$1" in
   configure)
@@ -12,15 +13,25 @@ case "$1" in
       echo "Generating sounds at $r Hz..." >&2
       for d in $spath/*; do
         [ -d $d ] || continue
-        mkdir -p $d/$r
+        if [ x"$bpath" = x"music" ]
+        then
+          mkdir -p $d/../$r
+        else
+          mkdir -p $d/$r
+        fi
         for f in $d/flac/*.flac; do
           [ -f $f ] || continue
           w=${f%.flac}.wav
-          flac -s -d -c $f | sox -t wav - -c1 -r$r -b16 -e signed-integer $d/$r/${w##*/}
+          if [ x"$bpath" = x"music" ]
+          then
+            flac -s -d -c $f | sox -t wav - -c1 -r$r -b16 -e signed-integer $d/../$r/${w##*/}
+          else
+            flac -s -d -c $f | sox -t wav - -c1 -r$r -b16 -e signed-integer $d/$r/${w##*/}
+          fi
         done
       done
     done
-    for d in $spath/*; do rm -rf $d/flac; done
+    # for d in $spath/*; do rm -rf $d/flac; done
     ;;
   abort-upgrade|abort-remove|abort-deconfigure)
     ;;
