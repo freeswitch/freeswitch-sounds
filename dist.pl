@@ -12,7 +12,7 @@ use File::Basename;
 my $debug = 1;
 
 my @languages = qw(en/us/callie en/us/allison en/ca/june es/ar/mario fr/ca/june pt/BR/karina ru/RU/elena ru/RU/kirill ru/RU/vika sv/se/jakob zh/cn/sinmei zh/hk/sinmei music);
-my @versions  = qw(1.0.52       1.0.1         1.0.51     1.0.0       1.0.51     1.0.51       1.0.51      1.0.0        1.0.0      1.0.50      1.0.51       1.0.51       1.0.52);
+my @versions  = qw(1.0.53       1.0.1         1.0.51     1.0.0       1.0.51     1.0.51       1.0.51      1.0.0        1.0.0      1.0.50      1.0.51       1.0.51       1.0.52);
 my @rates     = qw(8000 16000 32000 48000);
 
 if (scalar(@ARGV)) {
