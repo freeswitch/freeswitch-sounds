@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Ported from freeswitch w32/Setup/Sounds/Setup.Sounds.2017.wixproj.
+
+  Differences from the freeswitch original:
+   * The freeswitch DownloadPackageTask + 7za targets (which fetched the tarball
+     and 7za from files.freeswitch.org) are replaced by the EnsureSoundFiles
+     target below: it sources the tarball from a local dist.pl build or the
+     GitHub release and extracts it with built-in tar. msbuild still works out of
+     the box, with no files.freeswitch.org and no 7za dependency.
+   * Paths are relative to this windows/ folder rather than the freeswitch root.
+   * Version data (sounds_version.txt / moh_version.txt) is generated from
+     ../dist.pl by gen-version-files.pl so dist.pl stays the single source of truth.
+   * Upgrade-code GUIDs (build/sounds_upgradecode.txt) are copied verbatim from
+     freeswitch so MSIs remain recognized upgrades of previously installed ones.
+-->
+<Project ToolsVersion="4.0" DefaultTargets="Build" InitialTargets="LoadDynamicVariables" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets">
+    <Import Project="basedir.props" Condition=" '$(BaseDirImported)' == ''" />
+  </ImportGroup>
+  <PropertyGroup>
+    <SoundPrimaryName Condition=" '$(SoundPrimaryName)' == '' ">en-us-callie</SoundPrimaryName>
+    <SoundQuality Condition=" '$(SoundQuality)' == '' ">8000</SoundQuality>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SoundVersionFile Condition=" '$(SoundPrimaryName)' == 'music' ">moh_version.txt</SoundVersionFile>
+    <SoundVersionFile Condition=" '$(SoundPrimaryName)' != 'music' ">sounds_version.txt</SoundVersionFile>
+    <OutputName>Freeswitch-Sounds-$(SoundPrimaryName)-$(SoundQuality)Hz</OutputName>
+    <SoundSuffix>$(SoundPrimaryName.Replace("-","_"))$(SoundQuality)</SoundSuffix>
+    <CodeIndex Condition=" $(SoundQuality) == '8000' ">1</CodeIndex>
+    <CodeIndex Condition=" $(SoundQuality) == '16000' ">2</CodeIndex>
+    <CodeIndex Condition=" $(SoundQuality) == '32000' ">3</CodeIndex>
+    <CodeIndex Condition=" $(SoundQuality) == '48000' ">4</CodeIndex>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ProjectGuid>4b082d46-c1b0-4dbb-8d8d-ac0d0fdcdbda</ProjectGuid>
+    <SchemaVersion>2.0</SchemaVersion>
+    <OutputType>Package</OutputType>
+    <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
+    <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" $(Platform) == 'x64' ">
+    <OutputPath>bin\x64\release\</OutputPath>
+    <IntermediateOutputPath>obj\X64\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Fragments\FreeSWITCHSoundFiles$(SoundSuffix).wxs" />
+    <Compile Include="Product.wxs" />
+  </ItemGroup>
+  <ItemGroup>
+    <WixExtension Include="WixUIExtension">
+      <HintPath>$(WixExtDir)\WixUIExtension.dll</HintPath>
+      <Name>WixUIExtension</Name>
+    </WixExtension>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Fragments" />
+  </ItemGroup>
+  <Import Project="$(WixTargetsPath)" />
+  <PropertyGroup>
+    <PreBuildEvent>"$(WixToolPath)\heat.exe" dir "$(BaseDir)libs\sounds\$(SoundSuffix)" -cg FreeSWITCHSoundFiles$(SoundSuffix) -gg -scom -sreg -sfrag -srd -dr SOUNDLOCATION -var var.FreeSWITCHSoundFilesDir -out "$(ProjectDir)Fragments\FreeSWITCHSoundFiles$(SoundSuffix).wxs"</PreBuildEvent>
+  </PropertyGroup>
+  <Target Name="LoadDynamicVariables">
+    <ReadLinesFromFile File="$(BaseDir)build/$(SoundVersionFile)">
+      <Output TaskParameter="Lines" ItemName="LinesFromFile" />
+    </ReadLinesFromFile>
+    <CreateProperty Value="$([System.String]::Copy('%(LinesFromFile.Identity)').Split(' ')[1])" Condition=" $([System.String]::Copy('%(LinesFromFile.Identity)').Split(' ')[0]) == '$(SoundPrimaryName)'">
+      <Output TaskParameter="Value" PropertyName="SoundVersion" />
+    </CreateProperty>
+    <CreateProperty Value="%(LinesFromFile.Identity)" Condition=" $(SoundPrimaryName) == 'music' ">
+      <Output TaskParameter="Value" PropertyName="SoundVersion" />
+    </CreateProperty>
+    <Message Importance="High" Text="SoundVersion is $(SoundVersion)" />
+    <ReadLinesFromFile File="$(BaseDir)build/sounds_upgradecode.txt">
+      <Output TaskParameter="Lines" ItemName="LinesFromCodeFile" />
+    </ReadLinesFromFile>
+    <CreateProperty Value="$([System.String]::Copy('%(LinesFromCodeFile.Identity)').Split(' ')[$(CodeIndex)])" Condition=" $([System.String]::Copy('%(LinesFromCodeFile.Identity)').Split(' ')[0]) == '$(SoundPrimaryName)'">
+      <Output TaskParameter="Value" PropertyName="SoundUpgradeCode" />
+    </CreateProperty>
+    <Message Importance="High" Text="SoundUpgradeCode is $(SoundUpgradeCode)" />
+    <Message Importance="High" Text="SoundSuffix is '$(SoundSuffix)'" />
+    <PropertyGroup>
+      <DefineConstants>BaseDir=$(BaseDir);SoundUpgradeCode=$(SoundUpgradeCode);SoundVersion=$(SoundVersion);SoundSuffix=$(SoundSuffix);SoundPrimaryName=$(SoundPrimaryName);SoundQuality=$(SoundQuality);FreeSWITCHSoundFilesDir=$(BaseDir)libs\sounds\$(SoundSuffix);</DefineConstants>
+    </PropertyGroup>
+    <CreateProperty Condition="'$(Platform)'=='x64'" Value="x64">
+      <Output TaskParameter="Value" PropertyName="UserFriendlyPlatform" />
+    </CreateProperty>
+    <CreateProperty Value="$(BaseDir)$(UserFriendlyPlatform)\FreeSWITCH-Sounds-$(SoundPrimaryName)-$(SoundVersion)-$(SoundQuality)Hz.msi">
+      <Output TaskParameter="Value" PropertyName="DestinationFileName" />
+    </CreateProperty>
+  </Target>
+  <!--
+    Ensure the sound payload is present at $(SoundsExtractDir) before heat runs.
+    This replaces freeswitch's BeforeBuild DownloadPackageTask (which pulled the
+    tarball and 7za from files.freeswitch.org). Order of preference:
+      1. Already extracted (CI pre-extract, or a previous build) -> do nothing.
+      2. An explicit tarball passed via /p:SoundTarball=<path>.
+      3. dist.pl's output at the repo root ($(BaseDir)..) or a local dist\ folder.
+      4. Otherwise download it from the GitHub release with curl.
+    Extraction uses tar; both curl and tar are built into Windows 10+/Server 2019+.
+    No files.freeswitch.org, no 7za. Override the release host with
+    /p:SoundReleaseBaseUrl=<url> (e.g. a fork's releases).
+  -->
+  <Target Name="EnsureSoundFiles" BeforeTargets="PreBuildEvent">
+    <PropertyGroup>
+      <SoundsExtractDir>$(BaseDir)libs\sounds\$(SoundSuffix)</SoundsExtractDir>
+      <SoundFileName>freeswitch-sounds-$(SoundPrimaryName)-$(SoundQuality)-$(SoundVersion).tar.gz</SoundFileName>
+      <SoundReleaseBaseUrl Condition=" '$(SoundReleaseBaseUrl)' == '' ">https://github.com/freeswitch/freeswitch-sounds/releases/download</SoundReleaseBaseUrl>
+    </PropertyGroup>
+
+    <!-- Decide by CONTENT, not directory existence: a previous failed download
+         can leave an empty dir behind, which must not be mistaken for "ready". -->
+    <ItemGroup>
+      <_ExistingSoundWav Include="$(SoundsExtractDir)\**\*.wav" />
+    </ItemGroup>
+    <PropertyGroup>
+      <DoFetch>false</DoFetch>
+      <DoFetch Condition=" '@(_ExistingSoundWav)' == '' ">true</DoFetch>
+    </PropertyGroup>
+
+    <Message Condition=" '$(DoFetch)' != 'true' " Importance="high"
+             Text="Sound payload already present at '$(SoundsExtractDir)'; skipping fetch/extract." />
+
+    <!-- Prefer a local tarball: explicit /p:SoundTarball=, then dist.pl's output. -->
+    <PropertyGroup Condition=" '$(DoFetch)' == 'true' ">
+      <SoundTarball Condition=" '$(SoundTarball)' == '' and Exists('$(BaseDir)..\$(SoundFileName)') ">$(BaseDir)..\$(SoundFileName)</SoundTarball>
+      <SoundTarball Condition=" '$(SoundTarball)' == '' and Exists('$(BaseDir)dist\$(SoundFileName)') ">$(BaseDir)dist\$(SoundFileName)</SoundTarball>
+    </PropertyGroup>
+
+    <MakeDir Condition=" '$(DoFetch)' == 'true' " Directories="$(SoundsExtractDir)" />
+
+    <!-- No local tarball: download from the GitHub release into the extract dir. -->
+    <Message Condition=" '$(DoFetch)' == 'true' and '$(SoundTarball)' == '' " Importance="high"
+             Text="No local tarball found; downloading $(SoundReleaseBaseUrl)/$(SoundPrimaryName)-$(SoundVersion)/$(SoundFileName)" />
+    <Exec Condition=" '$(DoFetch)' == 'true' and '$(SoundTarball)' == '' "
+          Command="curl -fL --retry 3 -o &quot;$(SoundsExtractDir)\$(SoundFileName)&quot; &quot;$(SoundReleaseBaseUrl)/$(SoundPrimaryName)-$(SoundVersion)/$(SoundFileName)&quot;"
+          ContinueOnError="true" />
+    <PropertyGroup Condition=" '$(DoFetch)' == 'true' and '$(SoundTarball)' == '' ">
+      <SoundTarball>$(SoundsExtractDir)\$(SoundFileName)</SoundTarball>
+      <DownloadedTarball>true</DownloadedTarball>
+    </PropertyGroup>
+
+    <!-- Turn the raw "curl exited with code 22" into actionable guidance. -->
+    <Error Condition=" '$(DoFetch)' == 'true' and !Exists('$(SoundTarball)') "
+           Text="Could not obtain the sound payload for $(SoundPrimaryName) $(SoundQuality)Hz (v$(SoundVersion)).%0A  The per-rate audio is NOT in the repo (git only has the 48kHz source) - it must come from a tarball.%0A  Tried: /p:SoundTarball=, the repo root (..\$(SoundFileName)), .\dist\, and the GitHub release (got an error, e.g. 404 if v$(SoundVersion) isn't published yet).%0A  Fix one of:%0A    - pass /p:SoundTarball=&lt;path-to-.tar.gz&gt;%0A    - drop the tarball at the repo root (e.g. run dist.pl on Linux/CI)%0A    - publish the GitHub release for tag $(SoundPrimaryName)-$(SoundVersion)%0A    - or override the host with /p:SoundReleaseBaseUrl=&lt;url&gt;" />
+
+    <Message Condition=" '$(DoFetch)' == 'true' " Importance="high"
+             Text="Extracting '$(SoundTarball)' into '$(SoundsExtractDir)'" />
+    <Exec Condition=" '$(DoFetch)' == 'true' "
+          Command="tar -xzf &quot;$(SoundTarball)&quot; -C &quot;$(SoundsExtractDir)&quot;" />
+
+    <!-- If we downloaded into the extract dir, remove the tarball so heat doesn't harvest it. -->
+    <Delete Condition=" '$(DownloadedTarball)' == 'true' " Files="$(SoundsExtractDir)\$(SoundFileName)" />
+  </Target>
+
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="$(OutputPath)$(OutputName).msi" DestinationFiles="$(DestinationFileName)" />
+    <Message Importance="High" Condition="Exists('$(DestinationFileName)')" Text="Success. An output MSI has been copied to $(DestinationFileName)" />
+  </Target>
+</Project>

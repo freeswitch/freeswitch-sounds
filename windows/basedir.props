@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- BaseDir is this "windows" folder. Ported from freeswitch w32/basedir.props,
+       where BaseDir pointed at the freeswitch repo root. Here everything the MSI
+       build needs (build/, docs/, libs/sounds/) lives under windows/. -->
+  <PropertyGroup Label="UserMacros" Condition=" '$(BaseDir)' == ''">
+      <BaseDir>$(MSBuildThisFileDirectory)</BaseDir>
+  </PropertyGroup>
+  <PropertyGroup>
+    <BaseDirImported>true</BaseDirImported>
+  </PropertyGroup>
+</Project>

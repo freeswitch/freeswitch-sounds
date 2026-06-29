@@ -1,0 +1,19 @@
+# Visual Studio
+.vs/
+
+# WiX build intermediates / outputs
+Fragments/
+bin/
+obj/
+x64/
+*.msi
+*.wixobj
+*.wixpdb
+
+# Extracted sound payloads (recreated at build time)
+libs/
+
+# Note: build/sounds_version.txt and build/moh_version.txt are generated from
+# dist.pl by gen-version-files.pl but ARE committed (like freeswitch), so a plain
+# `msbuild` works with no prerequisites. Re-run the generator after bumping a
+# version in dist.pl; CI regenerates them on every build.
