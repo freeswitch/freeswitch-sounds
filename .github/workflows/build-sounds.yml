@@ -1,0 +1,188 @@
+name: Build sound packages
+
+# Builds the FreeSWITCH sound tarballs with dist.pl and publishes each
+# package at its own version as a dedicated GitHub Release.
+#
+# dist.pl produces files named:
+#   freeswitch-sounds-<voice>-<rate>-<version>.tar.gz   (+ .md5/.sha1/.sha256)
+# e.g. freeswitch-sounds-en-us-callie-48000-1.0.53.tar.gz
+#      freeswitch-sounds-music-48000-1.0.52.tar.gz
+#
+# We group those files by (voice, version) and publish one release per
+# package-version, tagged "<voice>-<version>" (e.g. "en-us-callie-1.0.53",
+# "music-1.0.52"). The version is whatever dist.pl built, so tags can never
+# drift from the artifacts. Bumping a version in dist.pl cuts a brand-new
+# release and leaves every previous version frozen and downloadable at:
+#
+#   https://github.com/${{ github.repository }}/releases/download/<voice>-<version>/<filename>
+#
+# This replaces files.freeswitch.org as the source of sound packages.
+
+on:
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: >-
+          Space-separated package dirs to build, matching dist.pl's package
+          list (voices and/or "music"), e.g. "en/us/callie music".
+          Leave empty to build every package.
+        required: false
+        default: ""
+
+# Needed so the workflow can create tags, releases, and upload assets.
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install audio tooling
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sox normalize-audio libsox-fmt-all
+
+      - name: Build sound packages
+        env:
+          # Passed via env (not inlined into the script) to avoid shell
+          # injection from the workflow input. Unquoted on use so it splits
+          # into separate args; empty => dist.pl builds everything.
+          PACKAGES: ${{ inputs.packages }}
+        run: |
+          set -euo pipefail
+          perl dist.pl $PACKAGES
+          echo "---- built artifacts ----"
+          ls -1 freeswitch-sounds-*.tar.gz
+
+      - name: Publish per-package-version releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+
+          # Group built files by their (voice, version) -> release tag.
+          declare -A TAG_FILES
+          for f in freeswitch-sounds-*.tar.gz; do
+            base=${f#freeswitch-sounds-}   # <voice>-<rate>-<version>.tar.gz
+            base=${base%.tar.gz}           # <voice>-<rate>-<version>
+            if [[ $base =~ ^(.+)-(8000|16000|32000|48000)-([0-9][0-9.]*)$ ]]; then
+              voice=${BASH_REMATCH[1]}
+              version=${BASH_REMATCH[3]}
+              tag="${voice}-${version}"
+              # tarball + any checksum sidecars dist.pl generated
+              for path in "$f" "$f".md5 "$f".sha1 "$f".sha256; do
+                [[ -e $path ]] && TAG_FILES[$tag]+=" $path"
+              done
+            else
+              echo "WARN: cannot parse '$f', skipping" >&2
+            fi
+          done
+
+          if [[ ${#TAG_FILES[@]} -eq 0 ]]; then
+            echo "No built packages found to publish." >&2
+            exit 1
+          fi
+
+          for tag in "${!TAG_FILES[@]}"; do
+            read -ra files <<< "${TAG_FILES[$tag]}"
+            echo "== ${tag}: ${#files[@]} file(s) =="
+            if gh release view "$tag" >/dev/null 2>&1; then
+              echo "Release $tag exists; updating assets (clobber)."
+              gh release upload "$tag" "${files[@]}" --clobber
+            else
+              echo "Creating release $tag."
+              # --latest=false: per-package releases must not fight over the
+              # repo-wide "Latest" badge.
+              gh release create "$tag" "${files[@]}" \
+                --latest=false \
+                --title "$tag" \
+                --notes "FreeSWITCH sound package built by CI from dist.pl. Download a specific sample rate via /releases/download/${tag}/<filename>."
+            fi
+          done
+
+      - name: Upload artifacts (build record)
+        uses: actions/upload-artifact@v7
+        with:
+          name: sound-packages
+          path: |
+            freeswitch-sounds-*.tar.gz
+            freeswitch-sounds-*.tar.gz.md5
+            freeswitch-sounds-*.tar.gz.sha1
+            freeswitch-sounds-*.tar.gz.sha256
+          if-no-files-found: error
+          retention-days: 7
+
+  # Windows MSI installers, built from the tarballs produced above and attached
+  # to the same per-package-version releases. WiX scaffolding lives in windows/.
+  build-msi:
+    name: Build Windows MSIs
+    needs: build-and-release
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Download built sound tarballs
+        uses: actions/download-artifact@v8
+        with:
+          name: sound-packages
+          path: dist
+
+      - name: Install WiX Toolset v3
+        shell: pwsh
+        run: |
+          choco install wixtoolset -y --no-progress
+          # Discover the install dir (version may vary) and expose it via WIX so
+          # build-msi.ps1 / the wixproj resolve Wix.targets and the WiX tools.
+          $root = Get-ChildItem "C:\Program Files (x86)" -Directory -Filter "WiX Toolset v3*" |
+                  Sort-Object Name -Descending | Select-Object -First 1
+          if (-not $root) { throw "WiX Toolset v3 not found after install" }
+          "WIX=$($root.FullName)\" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          Write-Host "WIX=$($root.FullName)\"
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v3
+
+      - name: Build MSIs
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $tarballs = Get-ChildItem dist -Filter "freeswitch-sounds-*.tar.gz"
+          if ($tarballs.Count -eq 0) { throw "No tarballs found in dist/" }
+          foreach ($t in $tarballs) {
+            Write-Host "==== $($t.Name) ===="
+            ./windows/build-msi.ps1 -Tarball $t.FullName
+          }
+          Write-Host "---- built MSIs ----"
+          Get-ChildItem windows/x64 -Filter *.msi | Format-Table Name, Length -AutoSize
+
+      - name: Publish MSIs to per-package-version releases
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = "Stop"
+          $msis = Get-ChildItem windows/x64 -Filter *.msi
+          if ($msis.Count -eq 0) { throw "No MSIs were produced" }
+          foreach ($m in $msis) {
+            if ($m.Name -notmatch '^FreeSWITCH-Sounds-(.+)-([0-9][0-9.]*)-(8000|16000|32000|48000)Hz\.msi$') {
+              Write-Host "WARN: cannot parse '$($m.Name)', skipping"
+              continue
+            }
+            $tag = "$($Matches[1])-$($Matches[2])"   # <voice>-<version>, matches the release tag
+            Write-Host "Uploading $($m.Name) -> release $tag"
+            gh release upload $tag $m.FullName --clobber
+            if ($LASTEXITCODE -ne 0) { throw "gh release upload failed for $tag" }
+          }
+
+      - name: Upload MSIs (build record)
+        uses: actions/upload-artifact@v7
+        with:
+          name: sound-msis
+          path: windows/x64/*.msi
+          if-no-files-found: error
+          retention-days: 7
