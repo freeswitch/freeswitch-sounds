@@ -26,7 +26,7 @@
 #>
 param(
   [Parameter(Mandatory = $true)][string]$Tarball,
-  [string]$WixTargetsPath,
+  [string]$WixTargetsPath = $env:WixTargetsPath,
   [string]$Configuration = "Release",
   [string]$Platform = "x64"
 )
@@ -55,8 +55,15 @@ if (Test-Path $dest) { Remove-Item -Recurse -Force $dest }
 
 # 3. Build the MSI. The project's EnsureSoundFiles target extracts $SoundTarball
 #    (built-in tar) into libs/sounds/<suffix> before heat runs.
-if (-not $WixTargetsPath -and $env:WIX) {
+# Only override WixTargetsPath with a file that actually exists; otherwise leave
+# it empty so the wixproj's own fallback ($(MSBuildExtensionsPath32)\Microsoft\
+# WiX\v3.x\Wix.targets) resolves the standard install location.
+if (-not $WixTargetsPath -and $env:WIX -and (Test-Path (Join-Path $env:WIX "Wix.targets"))) {
   $WixTargetsPath = Join-Path $env:WIX "Wix.targets"
+}
+if ($WixTargetsPath -and -not (Test-Path $WixTargetsPath)) {
+  Write-Host "WixTargetsPath '$WixTargetsPath' not found; deferring to the project's default."
+  $WixTargetsPath = ""
 }
 
 $sln = Join-Path $here "Setup.Sounds.2017.sln"

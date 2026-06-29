@@ -136,13 +136,30 @@ jobs:
         shell: pwsh
         run: |
           choco install wixtoolset -y --no-progress
-          # Discover the install dir (version may vary) and expose it via WIX so
-          # build-msi.ps1 / the wixproj resolve Wix.targets and the WiX tools.
-          $root = Get-ChildItem "C:\Program Files (x86)" -Directory -Filter "WiX Toolset v3*" |
+
+          $pf86 = ${env:ProgramFiles(x86)}
+
+          # Toolset install dir (bin\heat.exe, candle.exe, light.exe). Export as WIX.
+          $root = Get-ChildItem $pf86 -Directory -Filter "WiX Toolset v3*" |
                   Sort-Object Name -Descending | Select-Object -First 1
           if (-not $root) { throw "WiX Toolset v3 not found after install" }
-          "WIX=$($root.FullName)\" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "WIX=$($root.FullName)\" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
           Write-Host "WIX=$($root.FullName)\"
+
+          # The WiX v3 MSBuild integration (wix.targets) location varies by
+          # installer; the standard spot is MSBuild\Microsoft\WiX\v3.x. Find it.
+          $candidates = @(
+            (Join-Path $pf86 "MSBuild\Microsoft\WiX\v3.x\wix.targets"),
+            (Join-Path $root.FullName "Wix.targets")
+          )
+          $targets = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $targets) {
+            $targets = Get-ChildItem (Join-Path $pf86 "MSBuild"), $root.FullName -Recurse -Filter "wix.targets" -ErrorAction SilentlyContinue |
+                       Select-Object -First 1 -ExpandProperty FullName
+          }
+          if (-not $targets) { throw "Could not locate WiX v3 wix.targets after install" }
+          Write-Host "WixTargetsPath=$targets"
+          "WixTargetsPath=$targets" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
 
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v3
