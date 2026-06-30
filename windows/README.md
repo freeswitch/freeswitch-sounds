@@ -15,6 +15,7 @@ Windows artifacts without cloning freeswitch and without `files.freeswitch.org`.
 | `gen-version-files.pl` | Generates `build/sounds_version.txt` + `build/moh_version.txt` from `../dist.pl` |
 | `docs/COPYING.rtf` | EULA shown by the installer |
 | `build-msi.ps1` | Builds a single MSI from a `dist.pl` tarball; used locally and by CI |
+| `build_sounds.cmd` | Builds all (or named) packages × 4 rates locally (ported from freeswitch) |
 
 `dist.pl` is the single source of truth for versions; the `*_version.txt` files
 are generated from it and are git-ignored.
@@ -37,6 +38,16 @@ version files after editing `dist.pl`.
 ```powershell
 # Convenience wrapper (regenerates version files, builds one MSI from a tarball):
 ./build-msi.ps1 -Tarball ..\freeswitch-sounds-en-us-callie-48000-1.0.53.tar.gz
+```
+
+Or build whole packages at all four rates (`msbuild` is auto-detected via
+`vswhere`, so a plain Command Prompt works). The project fetches each payload
+itself:
+
+```bat
+build_sounds.cmd                    :: every package, all rates
+build_sounds.cmd music              :: just music
+build_sounds.cmd en-us-callie music :: a subset
 ```
 
 Or drive `msbuild` directly — the project fetches/extracts the payload itself:
